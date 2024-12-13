@@ -12,7 +12,7 @@ namespace CasinoGame.Mechanics
         public Casino(ISaveLoadService<string> saveLoadService)
         {
             _saveLoadService = saveLoadService;
-            _playerProfile = new PlayerProfile("Player", 1000);
+            _playerProfile = null; // Изначально профиль не загружен
         }
 
         public void StartGame()
@@ -22,13 +22,32 @@ namespace CasinoGame.Mechanics
             // Загрузка профиля игрока
             string playerData = _saveLoadService.LoadData("playerProfile");
 
-            if (!string.IsNullOrEmpty(playerData))
-                _playerProfile = new PlayerProfile(playerData, 1000);
+            if (string.IsNullOrEmpty(playerData))
+            {
+                // Если данных нет, создаем новый профиль
+                Console.WriteLine("No profile found. Please enter your name:");
+                string playerName = Console.ReadLine();
+
+                // Профиль создается с 1000 деньгами
+                _playerProfile = new PlayerProfile(playerName, 1000);
+                Console.WriteLine($"Welcome, {_playerProfile.Name}! You have been given $1000.");
+            }
+            else
+            {
+                // Если профиль найден, загружаем его
+                _playerProfile = new PlayerProfile(playerData, 1000); // Профиль с 1000 деньгами, для примера
+                Console.WriteLine($"Welcome back, {_playerProfile.Name}!");
+            }
 
             // Выбор игры
             Console.WriteLine("Choose a game: 1 - Blackjack, 2 - Dice");
-            int choice = int.Parse(Console.ReadLine());
+            int choice;
+            while (!int.TryParse(Console.ReadLine(), out choice) || (choice != 1 && choice != 2))
+            {
+                Console.WriteLine("Invalid choice. Please enter 1 for Blackjack or 2 for Dice.");
+            }
 
+            // Игровой процесс
             if (choice == 1)
             {
                 var game = new BlackjackGame(_playerProfile, 52); // Пример с 52 картами
@@ -50,6 +69,11 @@ namespace CasinoGame.Mechanics
 
             // Сохранение профиля
             _saveLoadService.SaveData(_playerProfile.Name, "playerProfile");
+            Console.WriteLine("Your profile has been saved.");
+
+            // Добавляем паузу перед выходом из программы, чтобы пользователь успел увидеть результат
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey(); // Ожидаем нажатие клавиши
         }
     }
 }
