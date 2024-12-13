@@ -1,4 +1,4 @@
-﻿namespace CasinoGame.CardsAndDice
+﻿namespace CasinoGame.Types
 {
     public enum CardSuit
     {

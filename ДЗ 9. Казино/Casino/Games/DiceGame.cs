@@ -1,4 +1,5 @@
-﻿using CasinoGame.CardsAndDice;
+﻿using CasinoGame.Profiles;
+using CasinoGame.Types;
 using System;
 using System.Collections.Generic;
 
@@ -6,54 +7,107 @@ namespace CasinoGame.Games
 {
     public class DiceGame : CasinoGameBase
     {
-        private List<Dice> _diceList;
+        private readonly int _numDice;
+        private readonly int _minValue;
+        private readonly int _maxValue;
+        private readonly PlayerProfile _playerProfile;
 
-        public DiceGame(int diceCount, int minValue, int maxValue)
+        private List<Dice> _playerDice;
+        private List<Dice> _computerDice;
+
+        public DiceGame(PlayerProfile playerProfile, int numDice, int minValue, int maxValue)
         {
-            _diceList = new List<Dice>();
+            if (numDice <= 0)
+                throw new ArgumentException("Number of dice should be greater than zero.");
+            if (minValue < 1 || maxValue > int.MaxValue || minValue > maxValue)
+                throw new ArgumentException("Invalid range for dice values.");
 
-            for (int i = 0; i < diceCount; i++)
-            {
-                _diceList.Add(new Dice(minValue, maxValue));
-            }
+            _playerProfile = playerProfile;
+            _numDice = numDice;
+            _minValue = minValue;
+            _maxValue = maxValue;
+
+            FactoryMethod(); // создаём кости
         }
 
         protected override void FactoryMethod()
         {
-            // Можно оставить пустым, так как кости уже создаются в конструкторе
+            _playerDice = new List<Dice>();
+            _computerDice = new List<Dice>();
+
+            // Создание костей для игрока
+            for (int i = 0; i < _numDice; i++)
+            {
+                _playerDice.Add(new Dice(_minValue, _maxValue));
+            }
+
+            // Создание костей для компьютера
+            for (int i = 0; i < _numDice; i++)
+            {
+                _computerDice.Add(new Dice(_minValue, _maxValue));
+            }
+        }
+
+        // Метод подсчёта суммы значений костей
+        private int GetDiceSum(List<Dice> diceList)
+        {
+            int sum = 0;
+            foreach (var dice in diceList)
+            {
+                sum += dice.Number;
+            }
+            return sum;
+        }
+
+        // Метод для вывода результатов бросков костей
+        private void PrintDiceResults()
+        {
+            Console.WriteLine("Your dice roll: ");
+            foreach (var dice in _playerDice)
+            {
+                Console.WriteLine($"[{dice.Number}]");
+            }
+            Console.WriteLine($"Total: {GetDiceSum(_playerDice)}");
+
+            Console.WriteLine("\nComputer's dice roll: ");
+            foreach (var dice in _computerDice)
+            {
+                Console.WriteLine($"[{dice.Number}]");
+            }
+            Console.WriteLine($"Total: {GetDiceSum(_computerDice)}");
         }
 
         public override void PlayGame()
         {
-            int playerTotal = 0;
-            int computerTotal = 0;
+            // Выводим результаты бросков костей
+            PrintDiceResults();
 
-            // Подсчёт суммы для игрока
-            foreach (var dice in _diceList)
-            {
-                playerTotal += dice.Number; // Используем свойство Number для генерации броска
-            }
+            // Подсчитываем сумму бросков игрока и компьютера
+            int playerTotal = GetDiceSum(_playerDice);
+            int computerTotal = GetDiceSum(_computerDice);
 
-            // Подсчёт суммы для компьютера
-            foreach (var dice in _diceList)
-            {
-                computerTotal += dice.Number; // Используем свойство Number для генерации броска
-            }
-
-            // Логика победы, ничьей и проигрыша
+            // Определяем победителя
             if (playerTotal > computerTotal)
             {
-                OnWinInvoke();  // Вызов события победы
+                PrintResult("You win!");
+                OnWinInvoke();
             }
             else if (playerTotal < computerTotal)
             {
-                OnLoseInvoke();  // Вызов события поражения
+                PrintResult("You lose!");
+                OnLooseInvoke();
             }
             else
             {
-                OnDrawInvoke();  // Вызов события ничьей
+                PrintResult("It's a draw!");
+                OnDrawInvoke();
+            }
+
+            // Если у игрока деньги 0, завершить игру
+            if (_playerProfile.Money <= 0)
+            {
+                Console.WriteLine("No money? Kicked!");
             }
         }
-
     }
 }

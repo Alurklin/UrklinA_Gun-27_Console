@@ -1,4 +1,4 @@
-﻿namespace CasinoGame.Casino
+﻿namespace CasinoGame.Mechanics
 {
     public interface IGame
     {

@@ -43,21 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CardsAndDice\CardSuit.cs" />
-    <Compile Include="CardsAndDice\CardValue.cs" />
-    <Compile Include="CardsAndDice\Card.cs" />
-    <Compile Include="CardsAndDice\Dice.cs" />
-    <Compile Include="CardsAndDice\WrongDiceNumberException.cs" />
-    <Compile Include="Casino\Casino.cs" />
-    <Compile Include="Casino\IGame.cs" />
-    <Compile Include="Casino\PlayerProfile.cs" />
+    <Compile Include="Profiles\WrongDiceNumberException.cs" />
+    <Compile Include="Types\CardSuit.cs" />
+    <Compile Include="Types\CardValue.cs" />
+    <Compile Include="Types\Card.cs" />
+    <Compile Include="Types\Dice.cs" />
+    <Compile Include="Mechanics\Casino.cs" />
+    <Compile Include="Mechanics\IGame.cs" />
+    <Compile Include="Profiles\PlayerProfile.cs" />
     <Compile Include="Games\BlackjackGame.cs" />
-    <Compile Include="Games\CasinoGameBase.cs" />
+    <Compile Include="Mechanics\CasinoGameBase.cs" />
     <Compile Include="Games\DiceGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SaveLoad\FileSystemSaveLoadService.cs" />
-    <Compile Include="SaveLoad\ISaveLoadService.cs" />
+    <Compile Include="Services\FileSystemSaveLoadService.cs" />
+    <Compile Include="Services\ISaveLoadService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
